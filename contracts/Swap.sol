@@ -74,7 +74,9 @@ contract Swap is ReentrancyGuard {
     ) external nonReentrant validToken(_token) {
         if(msg.sender != _user) {
             require(factory.executionPurchased(msg.sender, factory.getCurrenEpoch()));
-            factory.updateVolumeTracker(_token);
+            if(factory.claimWhitelist(_token)) {
+                factory.updateVolumeTracker(_token);
+            }
         }
         require(tranchePosition[_user][_token][_price] >= _amount);
         require(trancheSaleProceeds[_token][_price] >= _amount * _price / 1e18);
