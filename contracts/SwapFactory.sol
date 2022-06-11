@@ -13,6 +13,7 @@ contract SwapFactory {
     address public treasury;
     address public paymentCurrency;
 
+    uint256 public pendingExecutorCost;
     uint256 public executorCost;
     uint256 public fundsForTreasury;
     uint256 public treasuryCut;
@@ -38,6 +39,7 @@ contract SwapFactory {
     }
 
     function setTreasury(address _treasury) external {
+        require(pendingTreasury == address(0), "Must approve or reject first!");
         require(msg.sender == Treasury(treasury).admin());
         pendingTreasury = _treasury;
     }
@@ -45,11 +47,29 @@ contract SwapFactory {
     function approveTreasury() external {
         require(msg.sender == Treasury(treasury).multisig());
         treasury = pendingTreasury;
+        delete pendingTreasury;
     }
 
     function rejectTreasury() external {
         require(msg.sender == Treasury(treasury).multisig());
         delete pendingTreasury;
+    }
+
+    function setExecutionFee(uint256 _fee) external {
+        require(pendingExecutorCost == 0, "Must approve or reject first!");
+        require(msg.sender == Treasury(treasury).admin());
+        pendingExecutorCost = _fee;
+    }
+
+    function approveExecutionFee() external {
+        require(msg.sender == Treasury(treasury).multisig());
+        executorCost = pendingExecutorCost;
+        delete pendingExecutorCost;
+    }
+
+    function rejectExecutionFee() external {
+        require(msg.sender == Treasury(treasury).multisig());
+        delete pendingExecutorCost;
     }
 
     function createSwap(
