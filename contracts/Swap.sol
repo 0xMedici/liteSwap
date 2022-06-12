@@ -8,6 +8,7 @@ import "./helpers/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
 contract Swap is ReentrancyGuard {
+    
     SwapFactory public immutable factory;
     address public immutable swapToken1;
     address public immutable swapToken2;
