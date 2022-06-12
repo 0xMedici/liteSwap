@@ -34,27 +34,31 @@ contract Treasury {
     }
 
     function setAdmin(address _admin) external onlyAdmin {
-
+        require(pendingAdmin == address(0), "Must approve or reject first!");
+        pendingAdmin = _admin;
     }
 
     function approveAdmin() external onlyMultisig {
-
+        admin = pendingAdmin;
+        delete pendingAdmin;
     }
 
     function rejectAdmin() external onlyMultisig {
-
+        delete pendingAdmin;
     }
 
-    function setMultisig() external onlyAdmin {
-
+    function setMultisig(address _multisig) external onlyAdmin {
+        require(pendingMultisig == address(0), "Must approve or reject first!");
+        pendingMultisig = _multisig;
     }
 
     function approveMultisig() external onlyMultisig {
-
+        multisig = pendingMultisig;
+        delete pendingMultisig;
     }
 
     function rejectMultisig() external onlyMultisig {
-
+        delete pendingMultisig;
     }
 
     function withdrawCurrency(address _currency, uint256 _amount) external onlyAdmin {

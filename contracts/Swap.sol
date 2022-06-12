@@ -39,6 +39,15 @@ contract Swap is ReentrancyGuard {
         uint256 _price,
         uint256 _executionOffering
     ) external nonReentrant validToken(_token) {
+        uint32 size;
+        address _addr = msg.sender;
+        assembly {
+            size := extcodesize(_addr)
+        }
+        require(
+            size == 0 
+            || factory.interactionPurchased(msg.sender, factory.getCurrenEpoch())
+        );
         openSwaps[_token][_price] += _amount; 
         tranchePosition[msg.sender][_token][_price] += _amount;
         trancheExecutionOffering[msg.sender][_token][_price] = _executionOffering;
