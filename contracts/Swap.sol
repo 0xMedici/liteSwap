@@ -133,7 +133,11 @@ contract Swap is ReentrancyGuard {
             Bid memory bid = 
                 blockBidInfo[_block[i]][_token][price];
             require(bid.bidder == msg.sender);
-            amount += bid.bid * price * ERC20(_token).decimals() / 1e18;
+            if(openSwaps[_block[i]][_token][price] > bid.bid * price * ERC20(_token).decimals() / 1e18) {
+                amount += bid.bid * price * ERC20(_token).decimals() / 1e18;
+            } else {
+                amount += openSwaps[_block[i]][_token][price];
+            }
             fee += openSwapsExecutorReward[_block[i]][_token][price];
             openBlockRewardClaimed[_block[i]][_token][price] = true;
 
